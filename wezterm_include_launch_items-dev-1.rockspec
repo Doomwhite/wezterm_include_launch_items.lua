@@ -1,7 +1,7 @@
 package = "wezterm_include_launch_items"
 version = "1.0-1"
 source = {
-   url = "git://github.com/yourusername/yourrepository.git"
+   url = "git://github.com/Doomwhite/wezterm_include_launch_items.lua.git"
 }
 description = {
    summary = "A Lua script to include launch items in WezTerm",
