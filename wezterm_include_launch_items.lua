@@ -1,16 +1,26 @@
 local lfs = require("lfs")
 
 -- The update_menu function
-local function include_launch_items(userDirectory, directory, key)
-	local updateDirectory = ""
+local function include_launch_items(userDirectory, directory, key, launch_menu_directory)
+	local sourceDirectory = ""
 
-	if userDirectory then
-		updateDirectory = userDirectory .. directory
+	directory = string.gsub(directory, "\\", "/")
+
+	if not userDirectory then
+		userDirectory = string.gsub(os.getenv('HOME'), "\\", "/")
 	else
-		updateDirectory = os.getenv('HOME') .. directory
+		userDirectory = string.gsub(userDirectory, "\\", "/")
 	end
 
-	local file, err = io.open("launch_menu.lua", "r")
+	if not launch_menu_directory then
+		launch_menu_directory = userDirectory .. "/.config/wezterm/config/launch_menu.lua"
+	else
+		launch_menu_directory = string.gsub(launch_menu_directory, "\\", "/")
+	end
+
+	local sourceDirectory = userDirectory .. directory
+
+	local file, err = io.open(launch_menu_directory, "r")
 
 	-- Check if the file was opened successfully
 	if file then
@@ -32,19 +42,15 @@ local function include_launch_items(userDirectory, directory, key)
 
 		-- If the comments were found, replace the lines between them
 		if startIndex and endIndex then
-			print(endIndex)
-			print(startIndex)
 			-- Remove the old lines
 			for i = endIndex - 1, startIndex + 1, -1 do
 				table.remove(lines, i)
 			end
 
 			-- Insert the new lines
-			for item in lfs.dir(updateDirectory) do
-				print(item)
+			for item in lfs.dir(sourceDirectory) do
 				if item ~= "." and item ~= ".." then
-					local fullPath = updateDirectory .. "/" .. item
-					print(fullPath)
+					local fullPath = sourceDirectory .. "/" .. item
 					if lfs.attributes(fullPath, "mode") == "directory" then
 						table.insert(lines, startIndex + 1, '\ttable.insert(menuItems, {')
 						table.insert(lines, startIndex + 2, '\t\tlabel = "' .. item .. '",')
@@ -59,7 +65,7 @@ local function include_launch_items(userDirectory, directory, key)
 		end
 
 		-- Write the modified file
-		file = io.open("launch_menu.lua", "w")
+		file = io.open(launch_menu_directory, "w")
 		for _, line in ipairs(lines) do
 			file:write(line .. "\n")
 		end
@@ -71,7 +77,7 @@ end
 
 -- Parse command-line arguments
 local args = { ... }
-local userDirectory, directory, key = nil, nil, nil
+local userDirectory, directory, key, launch_menu_directory = nil, nil, nil, nil
 for i = 1, #args do
 	if args[i]:find("^%-%-userDirectory=") then
 		userDirectory = args[i]:gsub("^%-%-userDirectory=", "")
@@ -79,12 +85,14 @@ for i = 1, #args do
 		directory = args[i]:gsub("^%-%-directory=", "")
 	elseif args[i]:find("^%-%-key=") then
 		key = args[i]:gsub("^%-%-key=", "")
+	elseif args[i]:find("^%-%-launch_menu_directory=") then
+		launch_menu_directory = args[i]:gsub("^%-%-launch_menu_directory=", "")
 	end
 end
 
 -- Call the update_menu function with the parsed arguments
 if directory and key then
-	include_launch_items(userDirectory, directory, key)
+	include_launch_items(userDirectory, directory, key, launch_menu_directory)
 else
 	if not directory then
 		print("Directory is required.")
