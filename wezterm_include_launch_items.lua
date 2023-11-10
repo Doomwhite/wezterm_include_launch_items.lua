@@ -1,10 +1,21 @@
 local lfs = require("lfs")
 
+function add_slash(s)
+    if s:find("\"$") then
+        s = s:sub(1, -2) .. "/"
+    elseif not s:find("/$") then
+        s = s .. "/"
+    elseif s:find("//$") then
+        s = s:sub(1, -2)
+    end
+    return s
+end
+
 -- The update_menu function
 local function include_launch_items(userDirectory, directory, key, launch_menu_directory)
 	local sourceDirectory = ""
 
-	directory = string.gsub(directory, "\\", "/")
+	directory = add_slash(string.gsub(directory, "\\", "/"))
 
 	if not userDirectory then
 		userDirectory = string.gsub(os.getenv('HOME'), "\\", "/")
@@ -54,7 +65,7 @@ local function include_launch_items(userDirectory, directory, key, launch_menu_d
 					if lfs.attributes(fullPath, "mode") == "directory" then
 						table.insert(lines, startIndex + 1, '\ttable.insert(menuItems, {')
 						table.insert(lines, startIndex + 2, '\t\tlabel = "' .. item .. '",')
-						table.insert(lines, startIndex + 3, '\t\targs = { "' .. userDirectory .. 'scoop/shims/pwsh.exe" },')
+						table.insert(lines, startIndex + 3, '\t\targs = { "' .. add_slash(userDirectory) .. 'scoop/shims/pwsh.exe" },')
 						table.insert(lines, startIndex + 4, '\t\tcwd = "' .. fullPath .. '",')
 						table.insert(lines, startIndex + 5, '\t\tdomain = { DomainName = "local" },')
 						table.insert(lines, startIndex + 6, '\t})')
