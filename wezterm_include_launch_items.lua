@@ -63,8 +63,9 @@ local function include_launch_items(userDirectory, directory, key, launch_menu_d
 				if item ~= "." and item ~= ".." then
 					local fullPath = sourceDirectory .. "/" .. item
 					if lfs.attributes(fullPath, "mode") == "directory" then
+						local label = key .. " - " .. item
 						table.insert(lines, startIndex + 1, '\ttable.insert(menuItems, {')
-						table.insert(lines, startIndex + 2, '\t\tlabel = "' key .. " - " .. item .. '",')
+						table.insert(lines, startIndex + 2, '\t\tlabel = "' .. label .. '",')
 						table.insert(lines, startIndex + 3, '\t\targs = { "' .. add_slash(userDirectory) .. 'scoop/shims/pwsh.exe" },')
 						table.insert(lines, startIndex + 4, '\t\tcwd = "' .. fullPath .. '",')
 						table.insert(lines, startIndex + 5, '\t\tdomain = { DomainName = "local" },')
