@@ -87,18 +87,16 @@ local function include_launch_items(userDirectory, directory, key, launch_menu_d
 	end
 end
 
--- Parse command-line arguments
-local args = { ... }
 local userDirectory, directory, key, launch_menu_directory = nil, nil, nil, nil
-for i = 1, #args do
-	if args[i]:find("^%-%-userDirectory=") then
-		userDirectory = args[i]:gsub("^%-%-userDirectory=", "")
-	elseif args[i]:find("^%-%-directory=") then
-		directory = args[i]:gsub("^%-%-directory=", "")
-	elseif args[i]:find("^%-%-key=") then
-		key = args[i]:gsub("^%-%-key=", "")
-	elseif args[i]:find("^%-%-launch_menu_directory=") then
-		launch_menu_directory = args[i]:gsub("^%-%-launch_menu_directory=", "")
+for i = 1, #arg do
+	if arg[i]:find("^%-%-userDirectory=") then
+		userDirectory = arg[i]:gsub("^%-%-userDirectory=", "")
+	elseif arg[i]:find("^%-%-directory=") then
+		directory = arg[i]:gsub("^%-%-directory=", "")
+	elseif arg[i]:find("^%-%-key=") then
+		key = arg[i]:gsub("^%-%-key=", "")
+	elseif arg[i]:find("^%-%-launch_menu_directory=") then
+		launch_menu_directory = arg[i]:gsub("^%-%-launch_menu_directory=", "")
 	end
 end
 
