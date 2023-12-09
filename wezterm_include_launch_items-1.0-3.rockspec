@@ -1,5 +1,5 @@
 package = "wezterm_include_launch_items"
-version = "1.0-2"
+version = "1.0-3"
 source = {
    url = "git://github.com/Doomwhite/wezterm_include_launch_items.lua.git"
 }
